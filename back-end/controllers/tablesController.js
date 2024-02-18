@@ -2,11 +2,14 @@ import { prisma } from "../db/db";
 
 const Table = prisma.table;
 
-// List
+//Read
 const getTables = async (req, res, next) => {
   try {
-    const result = await Table.findMany();
-    res.status(200).setHeader("Content-Type", "application/json").json(result);
+    const tables = await Table.findMany();
+    res
+      .status(200)
+      .setHeader("Content-Type", "application/json")
+      .json({ data: tables });
   } catch (error) {
     next(error);
   }
@@ -15,7 +18,7 @@ const getTables = async (req, res, next) => {
 // Create
 const createTable = async (req, res, next) => {
   try {
-    const createdTable = await Table.create({ data: req.body });
+    const createdTable = await Table.create({ data: req.body.data });
     res
       .status(201)
       .setHeader("Content-Type", "application/json")
@@ -27,11 +30,26 @@ const createTable = async (req, res, next) => {
 // Delete
 const deleteTables = async (req, res, next) => {
   try {
-    const { count } = await Table.deleteMany();
+    const deletedTables = await Table.deleteMany();
     res
       .status(200)
       .setHeader("Content-Type", "application/json")
-      .json({ data: { message: `${count} tables deleted` } });
+      .json(deletedTables);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//:tableId
+//Read
+const getTable = async (req, res, next) => {
+  try {
+    const table = await Table.findFirst({
+      where: {
+        id: req.params.tableId,
+      },
+    });
+    res.status(200).setHeader("Content-Type", "application/json").json(table);
   } catch (error) {
     next(error);
   }
@@ -51,10 +69,25 @@ const updateTable = async (req, res, next) => {
     next(error);
   }
 };
+//Delete
+const deleteTable = async (req, res, next) => {
+  try {
+    const table = await Table.delete({
+      where: {
+        id: req.params.tableId,
+      },
+    });
+    res.status(200).setHeader("Content-Type", "application/json").json(table);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getTables,
+  getTable,
   createTable,
   updateTable,
   deleteTables,
+  deleteTable,
 };
