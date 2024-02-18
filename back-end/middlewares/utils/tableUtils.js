@@ -1,14 +1,14 @@
-import { prisma } from "../db/db";
+import prisma from "../../db/db.js";
 
 //Table
-const validFields = ["name", "capacity"];
+const tableValidFields = ["name", "capacity"];
 
 // CREATE MIDDLEWARE VALIDATION HELPER FUNCTION
 export function tableValidator(data, validFields) {
   // returns an array of fields that are invalid
   const fieldsNotValid = [];
 
-  if (!data.table_name || data.table_name.length < 2) {
+  if (!data.name || data.name.length < 2) {
     fieldsNotValid.push("name");
   }
   if (data.capacity < 1 || typeof data.capacity !== "number") {
@@ -25,8 +25,8 @@ export function tableValidator(data, validFields) {
 
 // CREATE MIDDLEWARE 1 OF 1
 export function hasValidCreateFields(req, res, next) {
-  const { data = {} } = req.body;
-  const invalidFields = tableValidator(data, validFields);
+  const table = req.body;
+  const invalidFields = tableValidator(table, tableValidFields);
   if (invalidFields.length) {
     return next({
       status: 400,
@@ -97,7 +97,7 @@ export async function validateToSeatTable(req, res, next) {
 }
 
 // DESTROY MIDDLEWARE 1 of 2
-async function tableIdExists(req, res, next) {
+export async function tableIdExists(req, res, next) {
   const tableId = req.params.tableId;
 
   const table = await prisma.table.findFirst({
@@ -117,7 +117,7 @@ async function tableIdExists(req, res, next) {
 }
 
 // DESTROY MIDDLEWARE 2 of 2
-async function tableNotOccupied(req, res, next) {
+export async function tableNotOccupied(req, res, next) {
   const { tableId } = req.params;
   const table = res.locals.table;
 

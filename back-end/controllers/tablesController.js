@@ -1,4 +1,4 @@
-import { prisma } from "../db/db";
+import prisma from "../db/db.js";
 
 const Table = prisma.table;
 
@@ -18,7 +18,7 @@ const getTables = async (req, res, next) => {
 // Create
 const createTable = async (req, res, next) => {
   try {
-    const createdTable = await Table.create({ data: req.body.data });
+    const createdTable = await Table.create({ data: req.body });
     res
       .status(201)
       .setHeader("Content-Type", "application/json")
@@ -57,14 +57,26 @@ const getTable = async (req, res, next) => {
 // Update
 const updateTable = async (req, res, next) => {
   try {
-    const updatedTable = await Table.update({
-      where: { id: req.params.tableId },
-      data: req.body,
+    const updatedTable = {
+      ...res.locals.table,
+      reservationId: Number(req.body.data.reservationId),
+    };
+
+    await prisma.reservation.update({
+      where: {
+        id: req.body.data.reservationId,
+      },
+      data: {
+        status: "seated",
+      },
     });
-    res
-      .status(200)
-      .setHeader("Content-Type", "application/json")
-      .json(updatedTable);
+
+    const data = await Table.update({
+      where: { id: req.params.tableId },
+      data: updatedTable,
+    });
+
+    res.status(200).setHeader("Content-Type", "application/json").json(data);
   } catch (error) {
     next(error);
   }
@@ -72,18 +84,38 @@ const updateTable = async (req, res, next) => {
 //Delete
 const deleteTable = async (req, res, next) => {
   try {
-    const table = await Table.delete({
+    const { tableId } = req.params;
+    const resIdOnTable = res.locals.reservationId;
+    const tableToUpdate = res.locals.table;
+
+    await prisma.reservation.update({
       where: {
-        id: req.params.tableId,
+        id: resIdOnTable,
+      },
+      data: {
+        status: "finished",
       },
     });
-    res.status(200).setHeader("Content-Type", "application/json").json(table);
+
+    tableToUpdate.reservationId = null;
+
+    await Table.update({
+      where: {
+        id: tableId,
+      },
+      data: tableToUpdate,
+    });
+
+    res
+      .status(200)
+      .setHeader("Content-Type", "application/json")
+      .json(`table with Id: ${tableId} is now free`);
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = {
+export {
   getTables,
   getTable,
   createTable,

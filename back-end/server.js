@@ -1,13 +1,18 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
-const errorHandler = require("./middlewares/error");
+import express from "express";
+import * as dotenv from "dotenv";
+import bodyParser from "body-parser";
+import errorHandler from "./middlewares/error.js";
+import table from "./routes/tablesRoute.js";
+import logger from "./middlewares/logger.js";
 
 dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(logger);
+
+app.use("/tables", table);
 
 app.use(errorHandler);
 

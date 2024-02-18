@@ -1,11 +1,30 @@
 import { prisma } from "../db/db";
+// const { prisma } = require("../db/db.js");
 
 const Reservation = prisma.reservation;
 
 //Read
 const getReservations = async (req, res, next) => {
   try {
-    const reservations = await Reservation.findMany();
+    const mobileNumber = req.query.mobile_number;
+    const date = req.query.date;
+
+    const filterArgs = {
+      where: {},
+      orderBy: {},
+    };
+    //TODO
+    if (mobileNumber) {
+    }
+
+    if (date) {
+      filterArgs.where.date = date;
+      filterArgs.where.NOT = { status: "finished" };
+      filterArgs.orderBy.time = "asc";
+    }
+
+    const reservations = await Reservation.findMany(filterArgs);
+
     res
       .status(200)
       .setHeader("Content-Type", "application/json")
@@ -44,11 +63,7 @@ const deleteReservations = async (req, res, next) => {
 //Read
 const getReservation = async (req, res, next) => {
   try {
-    const reservation = await Reservation.findFirst({
-      where: {
-        id: req.params.reservationId,
-      },
-    });
+    const { reservation } = res.locals;
     res
       .status(200)
       .setHeader("Content-Type", "application/json")
@@ -89,7 +104,7 @@ const deleteReservation = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   getReservations,
   getReservation,
   createReservation,
