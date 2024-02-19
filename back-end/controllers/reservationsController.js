@@ -6,7 +6,7 @@ const Reservation = prisma.reservation;
 const getReservations = async (req, res, next) => {
   try {
     const mobileNumber = req.query.mobile_number;
-    const date = req.query.date;
+    const date = new Date(req.query.date);
 
     const filterArgs = {
       where: {},
