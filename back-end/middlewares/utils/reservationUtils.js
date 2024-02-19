@@ -128,16 +128,16 @@ export async function reservationExists(req, res, next) {
 }
 
 // UPDATE STATUS MIDDLEWARE 2 OF 3 (after reservationExists 1st)
-export async function reservationStatusFinished(req, res, next) {
-  const { status } = res.locals.reservation;
-  if (status === "finished") {
-    return next({
-      status: 400,
-      message: "reservation is currently finished",
-    });
-  }
-  return next();
-}
+// export async function reservationStatusFinished(req, res, next) {
+//   const { status } = res.locals.reservation;
+//   if (status === "finished") {
+//     return next({
+//       status: 400,
+//       message: "reservation is currently finished",
+//     });
+//   }
+//   return next();
+// }
 
 // UPDATE STATUS MIDDLEWARE 3 OF 3
 export async function reservationStatus(req, res, next) {
@@ -162,7 +162,7 @@ export async function reservationStatus(req, res, next) {
 
 // UPDATE MIDDLEWARE 3 of 3
 export async function onlyIfBooked(req, res, next) {
-  const { status } = req.body;
+  const { status } = res.locals.reservation;
   const { reservationId } = req.params;
   if (status !== "booked") {
     return next({

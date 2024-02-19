@@ -36,8 +36,14 @@ const getReservations = async (req, res, next) => {
 // Create
 const createReservation = async (req, res, next) => {
   try {
+    const dateTime = new Date(`${req.body.date}, ${req.body.time}`);
+    const resToBeCreated = {
+      ...req.body,
+      date: dateTime,
+      time: dateTime,
+    };
     const createdReservation = await Reservation.create({
-      data: { ...req.body, date: new Date(req.body.date) },
+      data: resToBeCreated,
     });
     res
       .status(201)
@@ -76,9 +82,18 @@ const getReservation = async (req, res, next) => {
 // Update
 const updateReservation = async (req, res, next) => {
   try {
+    let resToBeUpdated = { ...res.locals.reservation, ...req.body };
+    if (req.body.date || req.body.time) {
+      const dateTime = new Date(`${req.body.date}, ${req.body.time}`);
+      resToBeUpdated = {
+        ...resToBeUpdated,
+        date: dateTime,
+        time: dateTime,
+      };
+    }
     const updatedReservation = await Reservation.update({
       where: { id: req.params.reservationId },
-      data: req.body,
+      data: resToBeUpdated,
     });
     res
       .status(200)

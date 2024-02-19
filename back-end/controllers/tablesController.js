@@ -6,10 +6,7 @@ const Table = prisma.table;
 const getTables = async (req, res, next) => {
   try {
     const tables = await Table.findMany();
-    res
-      .status(200)
-      .setHeader("Content-Type", "application/json")
-      .json({ data: tables });
+    res.status(200).setHeader("Content-Type", "application/json").json(tables);
   } catch (error) {
     next(error);
   }
@@ -59,12 +56,12 @@ const updateTable = async (req, res, next) => {
   try {
     const updatedTable = {
       ...res.locals.table,
-      reservationId: Number(req.body.data.reservationId),
+      reservationId: req.body.reservationId,
     };
 
     await prisma.reservation.update({
       where: {
-        id: req.body.data.reservationId,
+        id: req.body.reservationId,
       },
       data: {
         status: "seated",

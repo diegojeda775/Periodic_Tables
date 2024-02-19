@@ -56,22 +56,10 @@ export async function tableExists(req, res, next) {
 // UPDATE MIDDLEWARE 2 of 2
 export async function validateToSeatTable(req, res, next) {
   let table = res.locals.table;
-  if (!req.body.data || !req.body.data.reservationId) {
+  if (!req.body || !req.body.reservationId) {
     return next({
       status: 400,
       message: `No reservationId/data`,
-    });
-  }
-  const reservation = await prisma.reservation.findFirst({
-    where: {
-      id: req.body.data.reservationId,
-    },
-  });
-
-  if (!reservation) {
-    return next({
-      status: 404,
-      message: `Reservation ${req.body.data.reservationId} does not exist`,
     });
   }
 
@@ -81,6 +69,20 @@ export async function validateToSeatTable(req, res, next) {
       message: `Table occupied`,
     });
   }
+
+  const reservation = await prisma.reservation.findFirst({
+    where: {
+      id: req.body.data.reservationId,
+    },
+  });
+
+  if (!reservation) {
+    return next({
+      status: 404,
+      message: `Reservation ${req.body.reservationId} does not exist`,
+    });
+  }
+
   if (reservation.party > table.capacity) {
     return next({
       status: 400,
