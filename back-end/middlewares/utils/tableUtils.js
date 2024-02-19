@@ -126,6 +126,7 @@ export async function tableNotOccupied(req, res, next) {
     res.locals.reservationId = table.reservationId;
     return next();
   }
+
   return next({
     status: 400,
     message: `tableId: ${tableId} is not occupied`,

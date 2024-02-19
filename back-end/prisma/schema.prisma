@@ -23,7 +23,7 @@ model Reservation {
   lastName     String
   mobileNumber String
   date         DateTime @db.Date
-  time         DateTime @db.Time(6)
+  time         DateTime @db.Time(4)
   status       String   @default("booked")
   party        Int
   createdAt    DateTime @default(now())

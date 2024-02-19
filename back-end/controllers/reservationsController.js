@@ -1,5 +1,4 @@
-import { prisma } from "../db/db";
-// const { prisma } = require("../db/db.js");
+import prisma from "../db/db.js";
 
 const Reservation = prisma.reservation;
 
@@ -37,7 +36,9 @@ const getReservations = async (req, res, next) => {
 // Create
 const createReservation = async (req, res, next) => {
   try {
-    const createdReservation = await Reservation.create({ data: req.body });
+    const createdReservation = await Reservation.create({
+      data: { ...req.body, date: new Date(req.body.date) },
+    });
     res
       .status(201)
       .setHeader("Content-Type", "application/json")
