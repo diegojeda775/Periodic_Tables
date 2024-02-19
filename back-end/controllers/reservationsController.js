@@ -5,18 +5,19 @@ const Reservation = prisma.reservation;
 //Read
 const getReservations = async (req, res, next) => {
   try {
-    const mobileNumber = req.query.mobile_number;
-    const date = new Date(req.query.date);
-
     const filterArgs = {
       where: {},
       orderBy: {},
     };
+
     //TODO
-    if (mobileNumber) {
+    if (req.query.mobile_number) {
+      const mobileNumber = req.query.mobile_number;
     }
 
-    if (date) {
+    if (req.query.date) {
+      const date = new Date(req.query.date);
+
       filterArgs.where.date = date;
       filterArgs.where.NOT = { status: "finished" };
       filterArgs.orderBy.time = "asc";
