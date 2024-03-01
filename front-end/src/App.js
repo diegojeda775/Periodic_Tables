@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -21,12 +21,26 @@ function App() {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const abortControllerRef = useRef(null);
 
   const loadDashboard = () => {
     try {
-    } catch (error) {}
+      abortControllerRef.current.abort();
+      abortControllerRef.current = new AbortController();
+      setReservationsError(null);
+      setIsLoading(true);
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Aborted");
+        return;
+      }
+      console.log(error.stack);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return <RouterProvider router={router} />;
