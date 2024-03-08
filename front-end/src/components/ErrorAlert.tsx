@@ -1,11 +1,23 @@
+import { AlertCircle } from "lucide-react"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ErrorAlert( error : any) {
-  if (error.message){
-    return <div>Error: {error.message}</div>
+  if (!error.message){
+    return <div></div>
   }
   return (
-    <div></div>
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>
+        {error.message}
+      </AlertDescription>
+    </Alert>
   )
 }
 

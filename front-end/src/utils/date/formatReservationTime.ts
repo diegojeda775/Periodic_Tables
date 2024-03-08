@@ -14,6 +14,8 @@ type Reservation = {
 };
 
 function formatTime(reservation: Reservation) {
+  reservation.time = new Date(reservation.time).toLocaleTimeString();
+  console.log("time", reservation.time);
   reservation.time = formatAsTime(reservation.time);
   return reservation;
 }

@@ -3,6 +3,8 @@ import { useData } from "@/components/DataContext"
 import { useNavigate } from 'react-router-dom'
 import { next, previous, today } from "@/utils/date/date-time"
 import ErrorAlert from "@/components/ErrorAlert"
+import { Button } from "@/components/ui/button"
+import ReservationsDisplay from "@/components/ReservationsDisplay"
 
 type DataContextValue = {
   date?: string | null
@@ -24,22 +26,25 @@ function Dashboard() {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div><h4>Reservations for {date}</h4></div>
-      <div>
-        <button onClick={() => navigate(`/?date=${previous(date)}`)}>
+      <div className="container"><h4>Reservations for {date}</h4></div>
+      <div className="container">
+        <Button variant={"secondary"} onClick={() => navigate(`/?date=${previous(date)}`)}>
           Previous
-        </button>
-        <button onClick={() => navigate(`/?date=${today()}`)}>
+        </Button>
+        <Button onClick={() => navigate(`/?date=${today()}`)}>
           Today
-        </button>
-        <button onClick={() => navigate(`/?date=${next(date)}`)}>
+        </Button>
+        <Button variant={"secondary"} onClick={() => navigate(`/?date=${next(date)}`)}>
           Next
-        </button>
+        </Button>
       </div>
-      <div>
+      <div className="container">
+        <h3>Reservations</h3>
         <ErrorAlert error={reservationsError}/>
+        <ReservationsDisplay />
       </div>
-      <div>
+      <div className="container">
+        <h3>Tables</h3>
         <ErrorAlert error={tablesError}/>
       </div>
 
