@@ -8,6 +8,20 @@ type DataContextProviderProps = {
   children: React.ReactNode
 }
 
+type DataContextValue = {
+  date?: string | null
+  reservations?: object[]
+  tables?: object[]
+  setReservations?: React.Dispatch<React.SetStateAction<never[]>>
+  setTables?: React.Dispatch<React.SetStateAction<never[]>>
+  reservationsError?: null | object
+  tablesError?: null | object
+  setReservationsError?: React.Dispatch<React.SetStateAction<null>> | React.Dispatch<React.SetStateAction<object>>
+  setTablesError?: React.Dispatch<React.SetStateAction<null>> | React.Dispatch<React.SetStateAction<object>>
+}
+
+
+
 const DataContext = createContext({})
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -61,15 +75,16 @@ export const DataProvider = ({children} : DataContextProviderProps) => {
     return reservation.status === "booked" || reservation.status === "seated";
   });
 
-  const value = {
-    filteredReservations, 
+  const value: DataContextValue = {
+    reservations: filteredReservations, 
     tables,
     setReservations,
     setReservationsError,
     reservationsError,
     setTables,
     setTablesError,
-    tablesError 
+    tablesError,
+    date 
   }
 
   return <DataContext.Provider value={value}>
