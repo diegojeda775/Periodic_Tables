@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
 import {
   Table,
   TableBody,
@@ -50,9 +49,9 @@ function ReservationsDisplay() {
               <TableCell>{res.party}</TableCell>
               <TableCell>{res.status?.toUpperCase()}</TableCell>
               <TableCell>
-                <Button>Seat</Button>
-                <Button variant={'secondary'}>Edit</Button>
-                <Button variant={'destructive'}>Cancel</Button>
+                <Button className="m-2 bg-green-600">Seat</Button>
+                <Button className="m-2 bg-blue-600"variant={'secondary'}>Edit</Button>
+                <Button className="m-2"variant={'destructive'}>Cancel</Button>
               </TableCell>
             </TableRow>
           )

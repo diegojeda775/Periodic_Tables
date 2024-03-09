@@ -28,14 +28,14 @@ function Dashboard() {
     <main>
       <h1>Dashboard</h1>
       <div className="container"><h4>Reservations for {date}</h4></div>
-      <div className="container">
-        <Button variant={"secondary"} onClick={() => navigate(`/?date=${previous(date)}`)}>
+      <div className="container items-center">
+        <Button className="m-2 bg-blue-600" onClick={() => navigate(`/?date=${previous(date)}`)}>
           Previous
         </Button>
-        <Button onClick={() => navigate(`/?date=${today()}`)}>
+        <Button className="m-2 bg-yellow-400" variant={"secondary"} onClick={() => navigate(`/?date=${today()}`)}>
           Today
         </Button>
-        <Button variant={"secondary"} onClick={() => navigate(`/?date=${next(date)}`)}>
+        <Button className="m-2 bg-blue-600" onClick={() => navigate(`/?date=${next(date)}`)}>
           Next
         </Button>
       </div>
