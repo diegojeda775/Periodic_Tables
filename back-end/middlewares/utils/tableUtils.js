@@ -72,7 +72,7 @@ export async function validateToSeatTable(req, res, next) {
 
   const reservation = await prisma.reservation.findFirst({
     where: {
-      id: req.body.data.reservationId,
+      id: req.body.reservationId,
     },
   });
 

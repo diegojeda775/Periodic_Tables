@@ -5,6 +5,7 @@ import { next, previous, today } from "@/utils/date/date-time"
 import ErrorAlert from "@/components/ErrorAlert"
 import { Button } from "@/components/ui/button"
 import ReservationsDisplay from "@/components/ReservationsDisplay"
+import TablesDisplay from "@/components/TablesDisplay"
 
 type DataContextValue = {
   date?: string | null
@@ -46,6 +47,7 @@ function Dashboard() {
       <div className="container">
         <h3>Tables</h3>
         <ErrorAlert error={tablesError}/>
+        <TablesDisplay />
       </div>
 
     </main>
