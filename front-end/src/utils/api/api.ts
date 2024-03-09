@@ -57,3 +57,13 @@ export const getTables = async (signal: any) => {
   const result = await fetchJson(url, { headers, signal });
   return result;
 };
+
+export async function deleteOnFinish(tableId: string, signal: AbortSignal) {
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}`);
+  const options = {
+    method: "DELETE",
+    headers,
+    signal,
+  };
+  return await fetch(url, options);
+}

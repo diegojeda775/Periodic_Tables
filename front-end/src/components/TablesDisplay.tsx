@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
+import React, { useRef } from 'react'
 import {
   Table,
   TableBody,
@@ -10,9 +10,29 @@ import {
 } from "./ui/table"
 import { useData } from './DataContext'
 import { Button } from './ui/button';
+import { deleteOnFinish } from '@/utils/api/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function TablesDisplay() {
   const {tables}: any = useData()
+  const navigate = useNavigate()
+  const abortControllerRef = useRef<AbortController>();
+
+  const finishHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, tableId: string) => {
+    e.preventDefault();
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const confirmBox = window.confirm("Is this table ready to seat new guests? This cannot be undone.")
+    try {
+      if(confirmBox) {
+        await deleteOnFinish(tableId, abortControllerRef.current.signal)
+        navigate(0)
+      }
+    } catch (error: any) {
+      throw Error(error)
+    }
+
+  }
   return (
     <Table>
       <TableHeader>
@@ -33,7 +53,7 @@ export default function TablesDisplay() {
               <TableCell>{table.capacity}</TableCell>
               <TableCell>{table.reservationId ? "Occupied" : "Free"}</TableCell>
               <TableCell>
-                {table.reservationId ? <Button>Finish</Button> : ""}
+                {table.reservationId ? <Button onClick={(e) => finishHandler(e, table.id)}>Finish</Button> : ""}
               </TableCell>
             </TableRow>
           )
