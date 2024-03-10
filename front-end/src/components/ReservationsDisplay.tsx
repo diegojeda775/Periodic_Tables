@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "./ui/table"
 import { useData } from './DataContext'
-import { Button } from './ui/button';
+import ReservationButtons from "./ReservationButtons";
 
 type Reservation = {
   id?: string;
@@ -49,9 +49,7 @@ function ReservationsDisplay() {
               <TableCell>{res.party}</TableCell>
               <TableCell>{res.status?.toUpperCase()}</TableCell>
               <TableCell>
-                <Button className="m-2 bg-green-600">Seat</Button>
-                <Button className="m-2 bg-blue-600"variant={'secondary'}>Edit</Button>
-                <Button className="m-2"variant={'destructive'}>Cancel</Button>
+                <ReservationButtons reservation={res}/>
               </TableCell>
             </TableRow>
           )

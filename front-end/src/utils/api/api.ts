@@ -65,5 +65,16 @@ export async function deleteOnFinish(tableId: string, signal: AbortSignal) {
     headers,
     signal,
   };
-  return await fetch(url, options);
+  return await fetchJson(url, options);
+}
+
+export async function cancelStatus(res: any, signal: AbortSignal) {
+  const url = `${API_BASE_URL}/reservations/${res.id}/status`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ ...res, status: "cancelled" }),
+    signal,
+  };
+  return await fetchJson(url, options);
 }

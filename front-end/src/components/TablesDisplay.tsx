@@ -37,7 +37,6 @@ export default function TablesDisplay() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Id</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Capacity</TableHead>
           <TableHead>Status</TableHead>
@@ -48,7 +47,6 @@ export default function TablesDisplay() {
         {tables.map((table : any) => {
           return (
             <TableRow key={table.id}>
-              <TableCell>{table.id}</TableCell>
               <TableCell>{table.name}</TableCell>
               <TableCell>{table.capacity}</TableCell>
               <TableCell>{table.reservationId ? "Occupied" : "Free"}</TableCell>

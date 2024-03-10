@@ -84,7 +84,7 @@ export const DataProvider = ({children} : DataContextProviderProps) => {
     setTables,
     setTablesError,
     tablesError,
-    date 
+    date
   }
 
   return <DataContext.Provider value={value}>
