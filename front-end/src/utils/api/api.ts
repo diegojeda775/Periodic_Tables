@@ -78,3 +78,12 @@ export async function cancelStatus(res: any, signal: AbortSignal) {
   };
   return await fetchJson(url, options);
 }
+
+export async function readReservation(
+  resId: string | undefined,
+  signal: AbortSignal
+) {
+  const url = new URL(`${API_BASE_URL}/reservations/${resId}`);
+
+  return await fetchJson(url, { headers, signal });
+}
