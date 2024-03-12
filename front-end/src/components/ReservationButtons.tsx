@@ -18,8 +18,9 @@ export default function ReservationButtons({reservation}: any) {
         "Do you want to cancel this reservation? This cannot be undone."
       );
       if(confirmBox){
-        await cancelStatus(reservation, abortControllerRef.current?.signal)
-        navigate(0)
+        console.log('confirmed')
+        await cancelStatus(reservation.id, abortControllerRef.current?.signal)
+        navigate('/')
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -30,12 +31,12 @@ export default function ReservationButtons({reservation}: any) {
     return (
       <>
         <Button className="m-2 bg-green-600">
-        <Link to={`/reservations/${reservation.id}/seat`}>Seat</Link>
+          <Link to={`/reservations/${reservation.id}/seat`}>Seat</Link>
         </Button>
         <Button className="m-2 bg-blue-600"variant={'secondary'}>
           <Link to={`/reservations/${reservation.id}/edit`}>Edit</Link>
         </Button>
-        <Button className="m-2"variant={'destructive'} onClick={(e) => handleCancel(e)}>Cancel</Button>
+        <Button className="m-2"variant={'destructive'} onClick={handleCancel}>Cancel</Button>
       </>
     )
   }

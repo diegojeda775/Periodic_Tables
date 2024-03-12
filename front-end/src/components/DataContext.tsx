@@ -8,10 +8,31 @@ type DataContextProviderProps = {
   children: React.ReactNode
 }
 
+type Table = {
+  id: string
+  name: string
+  capacity: number
+  createdAt: Date
+  updatedAt: Date
+  reservationId?: string | null
+}
+type Reservation = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  date: string;
+  time: string;
+  status: string;
+  party: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type DataContextValue = {
   date?: string | null
-  reservations?: object[]
-  tables?: object[]
+  reservations?: Reservation[]
+  tables?: Table[]
   setReservations?: React.Dispatch<React.SetStateAction<never[]>>
   setTables?: React.Dispatch<React.SetStateAction<never[]>>
   reservationsError?: null | object

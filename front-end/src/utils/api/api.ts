@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import formatReservationDate from "../date/formatReservationDate";
 import formatReservationTime from "../date/formatReservationTime";
-
+type Table = {
+  id: string;
+  name: string;
+  capacity: number;
+  createdAt: Date;
+  updatedAt: Date;
+  reservationId?: string | null;
+};
 const API_BASE_URL = import.meta.env.API_URL || "http://localhost:5000";
 
 const headers = new Headers();
@@ -68,12 +75,12 @@ export async function deleteOnFinish(tableId: string, signal: AbortSignal) {
   return await fetchJson(url, options);
 }
 
-export async function cancelStatus(res: any, signal: AbortSignal) {
-  const url = `${API_BASE_URL}/reservations/${res.id}/status`;
+export async function cancelStatus(resId: string, signal: AbortSignal) {
+  const url = `${API_BASE_URL}/reservations/${resId}/status`;
   const options = {
     method: "PUT",
     headers,
-    body: JSON.stringify({ ...res, status: "cancelled" }),
+    body: JSON.stringify({ status: "cancelled" }),
     signal,
   };
   return await fetchJson(url, options);
@@ -86,4 +93,19 @@ export async function readReservation(
   const url = new URL(`${API_BASE_URL}/reservations/${resId}`);
 
   return await fetchJson(url, { headers, signal });
+}
+
+export async function updateTable(
+  table: Table,
+  reservationId: string,
+  signal: AbortSignal
+) {
+  const url = `${API_BASE_URL}/tables/${table.id}`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ ...table, reservationId }),
+    signal,
+  };
+  return await fetchJson(url, options);
 }

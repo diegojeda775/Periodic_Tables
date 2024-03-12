@@ -52,7 +52,7 @@ export default function TablesDisplay() {
               <TableCell>{table.reservationId ? "Occupied" : "Free"}</TableCell>
               <TableCell>
                 {table.reservationId ? 
-                  <Button className="m-2 bg-gree-600" onClick={(e) => finishHandler(e, table.id)}>
+                  <Button className="m-2 bg-green-400" onClick={(e) => finishHandler(e, table.id)}>
                     Finish
                   </Button>
                   : ""
