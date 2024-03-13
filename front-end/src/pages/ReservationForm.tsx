@@ -7,13 +7,14 @@ import { Button } from '@/components/ui/button'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const formSchema = z.object({
-  
   firstName: z.string(),
   lastName: z.string(),
   mobileNumber: z.string(),
   date: z.string(),
   time: z.string(),
-  party: z.number(),
+  party: z.string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
+    message: "Expected number, received a string"
+  }),
   })
 function ReservationForm() {
   const {resId} = useParams()
@@ -26,11 +27,15 @@ function ReservationForm() {
       mobileNumber: "",
       date: "",
       time: "",
-      party: 0
+      party: ""
     }
   })
   
-  const handleSubmit= () => {}
+  const handleSubmit= (values: z.infer<typeof formSchema>) => {
+    const resToBeCreated = {...values, party: +values.party}
+    console.log(resToBeCreated)
+
+  }
   
   return (
     <div className='container max-w-md w-full items-center'>
@@ -151,7 +156,7 @@ function ReservationForm() {
           />
           <div className='flex flex-col justify-center'>
             <Button className='m-1' >{resId ? "Save" : "Submit"}</Button>
-            <Button className='m-1' variant={"destructive"} onClick={() => navigate(-1)}>Cancel</Button>
+            <Button className='m-1' variant={"destructive"} onClick={() => navigate('/')}>Cancel</Button>
           </div>
         </form>
       </Form>
