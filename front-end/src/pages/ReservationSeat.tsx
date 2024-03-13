@@ -2,8 +2,13 @@ import { useData } from "@/components/DataContext";
 import ErrorAlert from "@/components/ErrorAlert";
 import { Button } from "@/components/ui/button";
 import { readReservation, updateTable } from "@/utils/api/api";
-import { SetStateAction, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Params, useNavigate, useParams } from "react-router-dom";
+import * as z from 'zod'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Table = {
   id: string
@@ -30,8 +35,11 @@ type ErrorType = {
   message: string
 }
 
+const formSchema = z.object({
+  tableId: z.string()
+})
+
 function ReservationSeat() {
-  const [tableId, setTableId] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | undefined>(undefined);
   const [errors, setErrors] = useState<ErrorType | null>(null);
 
@@ -40,6 +48,9 @@ function ReservationSeat() {
   const { resId }: Readonly<Params<string>> = useParams()
   const navigate = useNavigate()
   const abortControllerRef = useRef<AbortController>();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema)
+  })
   
   useEffect(() => {
     async function getReservation(){
@@ -72,7 +83,6 @@ function ReservationSeat() {
         foundErrors.push(`The table you selected cannot ${reservation.party} people`)
       }
     }
-    console.log('error', foundErrors)
     if(foundErrors.length){
       setErrors(new Error(foundErrors.toString()))
       return false
@@ -80,42 +90,28 @@ function ReservationSeat() {
     return true
   }
 
-  const handleChange = async (e: { target: { value: SetStateAction<string>; }; }) => {
-    console.log(e.target.value)
-    setTableId(e.target.value)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    console.log("here)")
-    console.log("reservation", reservation)
-    console.log(tableId)
+  const handleSubmit = async (value: z.infer<typeof formSchema>) => {
     setErrors(null)
     abortControllerRef.current?.abort();
     abortControllerRef.current = new AbortController()
-    const foundTable = tables.find((table: Table) => tableId === table.id)
-    console.log(foundTable)
+    const foundTable = tables.find((table: Table) => value.tableId === table.id)
     const valid = validateSeat(foundTable)
     if(valid){
-      console.log("is Valid")
       try {
         await updateTable(foundTable, resId!, abortControllerRef.current.signal)
-        navigate(0)
+        navigate(`/?date=${reservation?.date}`)
       } catch (error: unknown) {
         const err = error as TypeError
         setErrors(err)
       }
-
     }
-
   }
 
   const tableOptionsJSX = () => {
     return tables.map((table: Table) => (
-      <option value={table.id} key={table.id}>
+      <SelectItem value={table.id} key={table.id}>
         {table.name} - {table.capacity}
-      </option>
+      </SelectItem>
     ));
   };
 
@@ -123,23 +119,39 @@ function ReservationSeat() {
     <div className="container">
       <h3>Reservation Seat</h3>
       <ErrorAlert error={errors} />
-      <div className="container">
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="tableId">Choose table:</label>
-          <select
-            name="tableId"
-            id="tableId"
-            value={tableId}
-            onChange={handleChange}
+      <div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}
+          className='max-w-md w-full flex flex-col gap-4'
           >
-            {tableOptionsJSX()}
-          </select>
-
-          <Button type="submit" className="m-2">Submit</Button>
-          <Button type="button" className="m-2" variant={"destructive"} onClick={()=> navigate(-1)}>
-            Cancel
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="tableId"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Choose Table</FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a table"/>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {tableOptionsJSX()}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
+            />
+            <Button type="submit" className="">Submit</Button>
+            <Button type="button" className="" variant={"destructive"} onClick={()=> navigate(-1)}>
+              Cancel
+            </Button>
+          </form>
+        </Form>
       </div>
     </div>
   )
