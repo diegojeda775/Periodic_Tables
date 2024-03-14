@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useNavigate, useParams } from 'react-router-dom'
+import { formatPhoneNumber } from '@/utils/api/api'
 
 const formSchema = z.object({
   firstName: z.string(),
@@ -30,6 +31,13 @@ function ReservationForm() {
       party: ""
     }
   })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const phoneNumberFormatter = ({ target }: any) => {
+    const formattedInputValue = formatPhoneNumber(target.value);
+    return formattedInputValue;
+  };
+
+  
   
   const handleSubmit= (values: z.infer<typeof formSchema>) => {
     const resToBeCreated = {...values, party: +values.party}
@@ -54,6 +62,7 @@ function ReservationForm() {
                       {...field} 
                       type='text'
                       placeholder="e.g. John"
+                      // value={}
                       required
                     />
                   </FormControl>
@@ -90,6 +99,7 @@ function ReservationForm() {
                       {...field} 
                       type='tel'
                       placeholder="555-555-5555"
+                      onChange={(event) => field.onChange(phoneNumberFormatter(event))}
                       required
                     />
                   </FormControl>
@@ -155,7 +165,7 @@ function ReservationForm() {
             }}
           />
           <div className='flex flex-col justify-center'>
-            <Button className='m-1' >{resId ? "Save" : "Submit"}</Button>
+            <Button className='m-1' type='submit'>{resId ? "Save" : "Submit"}</Button>
             <Button className='m-1' variant={"destructive"} onClick={() => navigate('/')}>Cancel</Button>
           </div>
         </form>
