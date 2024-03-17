@@ -5,7 +5,13 @@ import { useForm } from "react-hook-form"
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useNavigate, useParams } from 'react-router-dom'
-import { formatPhoneNumber } from '@/utils/api/api'
+import { formatPhoneNumber, readReservation } from '@/utils/api/api'
+import { useEffect, useRef, useState } from 'react'
+import ErrorAlert from '@/components/ErrorAlert'
+
+type ErrorType = {
+  message: string
+}
 
 const formSchema = z.object({
   firstName: z.string(),
@@ -13,31 +19,55 @@ const formSchema = z.object({
   mobileNumber: z.string(),
   date: z.string(),
   time: z.string(),
-  party: z.string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
-    message: "Expected number, received a string"
-  }),
+  party: z.number()
   })
+
 function ReservationForm() {
   const {resId} = useParams()
-  const navigate = useNavigate()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: "",
+  const [errors, setErrors] = useState<ErrorType | null>(null);
+  const [existingRes, setExistingRes] = useState({
+      firstName:"",
       lastName: "",
       mobileNumber: "",
       date: "",
       time: "",
-      party: ""
+      party: 0
+  })
+  const navigate = useNavigate()
+  const abortControllerRef = useRef<AbortController>()
+  const {setValue} = useForm()
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: "",
+      mobileNumber: '',
+      date: '',
+      time: '',
+      party: 0
     }
   })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const phoneNumberFormatter = ({ target }: any) => {
-    const formattedInputValue = formatPhoneNumber(target.value);
+  const phoneNumberFormatter = (value: string) => {
+    const formattedInputValue = formatPhoneNumber(value);
     return formattedInputValue;
   };
 
-  
+  useEffect(() => {
+    async function getReservation(){
+      try {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController()
+        const res = await readReservation(resId, abortControllerRef.current.signal)
+        setExistingRes({...res, date: new Date(res.date).toISOString().substring(0,10)})
+        Object.keys(res).forEach(key => setValue(`${key}`, res.key))
+      } catch (error) {
+        const err = error as TypeError
+        setErrors(err)
+      }
+    }
+    getReservation()
+  }, [resId, setValue])
   
   const handleSubmit= (values: z.infer<typeof formSchema>) => {
     const resToBeCreated = {...values, party: +values.party}
@@ -47,6 +77,7 @@ function ReservationForm() {
   
   return (
     <div className='container max-w-md w-full items-center'>
+      <ErrorAlert error={errors} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}
         className='max-w-md w-full flex flex-col gap-4'
@@ -62,7 +93,7 @@ function ReservationForm() {
                       {...field} 
                       type='text'
                       placeholder="e.g. John"
-                      // value={}
+                      // value={existingRes?.firstName}
                       required
                     />
                   </FormControl>
@@ -81,6 +112,7 @@ function ReservationForm() {
                       {...field} 
                       type='text'
                       placeholder="e.g. Smith"
+                      // value={existingRes?.lastName}
                       required
                     />
                   </FormControl>
@@ -99,7 +131,8 @@ function ReservationForm() {
                       {...field} 
                       type='tel'
                       placeholder="555-555-5555"
-                      onChange={(event) => field.onChange(phoneNumberFormatter(event))}
+                      onChange={(event) => field.onChange(phoneNumberFormatter(event.target.value))}
+                      // value={existingRes?.mobileNumber}
                       required
                     />
                   </FormControl>
@@ -119,6 +152,7 @@ function ReservationForm() {
                       type='date'
                       placeholder="MM/DD/YYYY"
                       pattern="\d{4}-\d{2}-\d{2}"
+                      // value={existingRes.date}
                       required
                     />
                   </FormControl>
@@ -138,6 +172,7 @@ function ReservationForm() {
                       type='time'
                       placeholder="HH:MM"
                       pattern="[0-9]{2}:[0-9]{2}"
+                      // value={existingRes.time.slice(11,16)}
                       required
                     />
                   </FormControl>
@@ -156,7 +191,9 @@ function ReservationForm() {
                       {...field} 
                       type='number'
                       placeholder="Number of people"
+                      onChange={(event) => field.onChange(+event.target.value)}
                       min={1}
+                      // value={existingRes?.party}
                       required
                     />
                   </FormControl>

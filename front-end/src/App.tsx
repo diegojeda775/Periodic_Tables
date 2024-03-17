@@ -1,11 +1,8 @@
-import { DataProvider } from "./components/DataContext"
-import AllRoutes from "./pages/AllRoutes"
+import Layout from "./pages/Layout"
 
 function App() {
   return (
-    <DataProvider>
-      <AllRoutes />
-    </DataProvider>
+    <Layout/>
   )
 }
 
