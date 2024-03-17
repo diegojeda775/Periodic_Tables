@@ -5,11 +5,11 @@ import React from 'react'
 
 function Layout() {
   return (
-  <div className='flex flex-col '>
-    <div className='col-span-3 h-full bg-slate-500'>
+  <div className='flex flex-col md:flex-row max-w-full' >
+    <div className=' h-full bg-slate-500'>
       <Navigation />
     </div>
-    <div className='col-span-2 '>
+    <div className=' '>
       <DataProvider>
         <AllRoutes />
       </DataProvider>

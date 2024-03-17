@@ -1,15 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Button } from './ui/button'
+
 
 function Navigation() {
   return (
     <nav className='flex flex-col container max-w-md w-full items-center'>
-      <Link to='/'>Periodic Tables</Link>
+      <Link className='m-2' to='/'>Periodic Tables</Link>
       <hr />
-      <Link to='/'>Dashboard</Link>
-      <Link to='/reservations/search'>Search</Link>
-      <Link to='/reservations/new'>New Reservation</Link>
-      <Link to='/tables/new'>Add Table</Link>
+      <Button variant="link"><Link to='/'>Dashboard</Link></Button>
+      <Button variant="link"><Link to='/reservations/search'>Search</Link></Button>
+      <Button variant="link"><Link to='/reservations/new'>New Reservation</Link></Button>
+      <Button variant="link"><Link to='/tables/new'>Add Table</Link></Button>
     </nav>
   )
 }
