@@ -7,7 +7,7 @@ import reservation from "./routes/reservationsRoute.js";
 import logger from "./middlewares/logger.js";
 import helmet from "helmet";
 import hpp from "hpp";
-import xss from "xss-clean";
+import { xss } from "express-xss-sanitizer";
 import cors from "cors";
 
 dotenv.config();
